@@ -1,0 +1,327 @@
+﻿﻿@using ClientManagement.Core.Application.ViewModels.Client
+﻿@using ClientManagement.Core.Application.ViewModels.Address
+@model IEnumerable<ClientViewModel>
+@{
+
+}
+
+<style>
+    .notification-container {
+        display: flex;
+        flex-direction: column;
+        // Ensure this is 'column', not 'column-reverse' align-items: flex-end;
+        position: fixed;
+        top: 20px;
+        right: 20px;
+        width: 350px;
+    }
+
+
+    .notification {
+        width: 100%;
+        border: 1px solid #ccc;
+        border-radius: 8px;
+        box-shadow: 0 2px 15px rgba(0,0,0,0.1);
+        background-color: #fff;
+        margin-bottom: 15px;
+        transform: translateX(100%);
+        transition: transform 0.5s ease-out, opacity 0.5s ease-out;
+        display: flex;
+        align-items: center;
+        opacity: 0;
+    }
+
+        .notification.hidden {
+            opacity: 0;
+            transform: translateX(100%);
+        }
+
+        .notification:not(.hidden) {
+            opacity: 1;
+            transform: translateX(0);
+        }
+
+    .innernoti {
+        padding: 10px;
+        background-color: #f0f0f0;
+        display: flex;
+        align-items: center;
+        width: 100%;
+        border-radius: 7px;
+    }
+
+    .notification-icon {
+        width: 40px;
+        height: 40px;
+        margin-right: 15px;
+    }
+
+    .text-content {
+        flex-grow: 1;
+    }
+
+    .notification-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        width: 100%;
+    }
+
+    .notification-title {
+        font-weight: bold;
+    }
+
+    .close-btn {
+        cursor: pointer;
+        border: none;
+        background-color: transparent;
+        font-size: 1.2rem;
+    }
+</style>
+
+<div class="notification-container mt-5">
+</div>
+
+<div class="container">
+    <div class="container-fluid px-4">
+        <h1 class="mt-4 text-center">Dashboard</h1>
+        <div class="card mb-4" style="margin-top:85px;">
+            <div class="card-header">
+                <i class="fas fa-table me-1"></i>
+                Clients
+            </div>
+            <div class="card-body">
+                <table id="datatablesSimple">
+                    <thead>
+                        <tr class="text-center">
+                            <th>Name</th>
+                            <th>Identification Number</th>
+                            <th>Email</th>
+                            <th>Phone</th>
+                            <th>Addresses</th>
+                            <th>Other actions</th>
+                        </tr>
+                    </thead>
+                    <tfoot>
+                        <tr>
+                            <th>Name</th>
+                            <th>Identification Number</th>
+                            <th>Email</th>
+                            <th>Phone</th>
+                            <th>Addresses</th>
+                            <th>Other actions</th>
+                        </tr>
+                    </tfoot>
+                    <tbody>
+                        @if (Model != null && Model.Count() > 0)
+                        {
+                            @foreach (ClientViewModel viewModel in Model)
+                            {
+                                <tr>
+                                    <td>@viewModel.CompleteName</td>
+                                    <td>@viewModel.IdentificationNumber</td>
+                                    <td>@viewModel.Email</td>
+                                    <td>@viewModel.Phone</td>
+                                    <td>
+                                        <button type="button" class="btn btn-success" data-bs-toggle="modal" data-bs-target="#modal-add-address">Add</button>
+                                        <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#modal-view-addresses">View</button>
+                                    </td>
+                                    <td>
+                                        <a asp-controller="Home" asp-action="DeleteClient" asp-route-id="@viewModel.Id" class="btn btn-danger" title="Delete" style="margin-left:20px;">
+                                            <i class="fas fa-trash"></i>
+                                        </a>
+                                    </td>
+                                </tr>
+
+                                <!-- Modal view-address -->
+                                <div class="modal fade" id="modal-view-addresses" tabindex="-1" aria-labelledby="modal-view-addresses-label" aria-hidden="true">
+                                    <div class="modal-dialog modal-dialog-centered">
+                                        <div class="modal-content">
+                                            <div class="modal-header">
+                                                <h5 class="modal-title">@viewModel.CompleteName's addresses (view only)</h5>
+                                                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                            </div>
+                                            <div class="modal-body">
+                                                @foreach (AddressViewModel address in viewModel.Addresses)
+                                                {
+                                                    <div>
+                                                        <div id="addressesContainer" class="container mb-2">
+                                                            <div id="addressTemplate" style="border-bottom:3px solid #999999">
+                                                                <input type="hidden" name="ClientId" value="@viewModel.Id" />
+                                                                <div class="form-floating mb-3">
+                                                                    <input name="Street" class="form-control" id="inputStreet" value="@address.Street" type="text" placeholder="Enter your street" readonly />
+                                                                    <label for="inputStreet">Street</label>
+                                                                </div>
+                                                                <div class="row mb-3">
+                                                                    <div class="col-md-6">
+                                                                        <div class="form-floating mb-3 mb-md-0">
+                                                                            <input name="City" class="form-control" value="@address.City" id="inputCity" type="text" placeholder="Enter your city" readonly />
+                                                                            <label for="inputCity">City</label>
+                                                                        </div>
+                                                                    </div>
+                                                                    <div class="col-md-6">
+                                                                        <div class="form-floating mb-3 mb-md-0">
+                                                                            <input name="State" class="form-control" value="@address.State" id="inputState" type="text" placeholder="Enter your state" readonly />
+                                                                            <label for="inputState">State</label>
+                                                                        </div>
+                                                                    </div>
+                                                                    <div class="col-md-6 mt-2">
+                                                                        <div class="form-floating mb-3 mb-md-0">
+                                                                            <input name="PostalCode" class="form-control" value="@address.PostalCode" id="inputPostalCode" type="text" placeholder="Enter your postal code" readonly />
+                                                                            <label for="inputPostalCode">Postal Code</label>
+                                                                        </div>
+                                                                    </div>
+                                                                    <div class="col-md-6 mt-2">
+                                                                        <div class="form-floating mb-3 mb-md-0">
+                                                                            <input name="Country" class="form-control" value="@address.Country" id="inputCountry" type="text" placeholder="Enter your country" readonly />
+                                                                            <label for="inputCountry">Country</label>
+                                                                        </div>
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                }
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <!-- Modal add-addresses -->
+                                <div class="modal fade" id="modal-add-address" tabindex="-1" aria-labelledby="modal-add-address-label" aria-hidden="true">
+                                    <div class="modal-dialog modal-dialog-centered">
+                                        <div class="modal-content">
+                                            <div class="modal-header">
+                                                <h5 class="modal-title">New address for @viewModel.CompleteName</h5>
+                                                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                            </div>
+                                            <div class="modal-body">
+                                                <form method="post" asp-controller="Home" asp-action="AddAddress" id="clientForm">
+                                                    <div class="row mb-3">
+                                                        <div>
+                                                            <div id="addressesContainer" class="container">
+                                                                <div id="addressTemplate" class="border-bottom mt-2">
+                                                                    <input type="hidden" name="ClientId" value="@viewModel.Id" />
+                                                                    <div class="form-floating mb-3">
+                                                                        <input name="Street" class="form-control" id="inputStreet" type="text" placeholder="Enter your street" />
+                                                                        <label for="inputStreet">Street</label>
+                                                                    </div>
+                                                                    <div class="row mb-3">
+                                                                        <div class="col-md-6">
+                                                                            <div class="form-floating mb-3 mb-md-0">
+                                                                                <input name="City" class="form-control" id="inputCity" type="text" placeholder="Enter your city" />
+                                                                                <label for="inputCity">City</label>
+                                                                            </div>
+                                                                        </div>
+                                                                        <div class="col-md-6">
+                                                                            <div class="form-floating mb-3 mb-md-0">
+                                                                                <input name="State" class="form-control" id="inputState" type="text" placeholder="Enter your state" />
+                                                                                <label for="inputState">State</label>
+                                                                            </div>
+                                                                        </div>
+                                                                        <div class="col-md-6 mt-2">
+                                                                            <div class="form-floating mb-3 mb-md-0">
+                                                                                <input name="PostalCode" class="form-control" id="inputPostalCode" type="text" placeholder="Enter your postal code" />
+                                                                                <label for="inputPostalCode">Postal Code</label>
+                                                                            </div>
+                                                                        </div>
+                                                                        <div class="col-md-6 mt-2">
+                                                                            <div class="form-floating mb-3 mb-md-0">
+                                                                                <input name="Country" class="form-control" id="inputCountry" type="text" placeholder="Enter your country" />
+                                                                                <label for="inputCountry">Country</label>
+                                                                            </div>
+                                                                        </div>
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                        <div class="mt-4 mb-0">
+                                                            <div class="d-grid">
+                                                                <button id="createAddressButton" class="btn btn-success btn-block" type="submit">Add address</button>
+                                                            </div>
+                                                        </div>
+                                                </form>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+
+                            }
+                        }
+                        else
+                        {
+
+                        }
+
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        const error = "@ViewBag.Error";
+
+        if (error !== "") {
+            const notificationData = [
+                {
+                    title: "Error",
+                    body: error,
+                    imgUrl: `<svg xmlns="http://www.w3.org/2000/svg" width="80" height="80" viewBox="0 0 24 24" style="fill: rgba(255, 0, 0, 1);transform: ;msFilter:;"><path d="M20 2H4c-1.103 0-2 .894-2 1.992v12.016C2 17.106 2.897 18 4 18h3v4l6.351-4H20c1.103 0 2-.894 2-1.992V3.992A1.998 1.998 0 0 0 20 2zm-7 13h-2v-2h2v2zm0-4h-2V5h2v6z"></path></svg>`
+                }
+            ];
+
+            notificationData.forEach((data, index) => {
+                setTimeout(() => {
+                    createNotification(data.title, data.body, data.imgUrl);
+                }, 1000 + 5000 * index);
+            });
+        }
+    });
+
+    function createNotification(title, body, imgUrl) {
+        const container = document.querySelector('.notification-container');
+
+        // Create notification element
+        const notification = document.createElement('div');
+        notification.className = 'notification hidden';
+        notification.innerHTML = `
+                    <div class="innernoti">
+                        ${imgUrl}
+                        <div class="text-content">
+                            <div class="notification-header">
+                                    <span class="notification-title"  style="margin-left:5px;">${title}</span>
+                                <button class="close-btn">&times;</button>
+                            </div>
+                            <div class="notification-body" style="margin-left:5px;margin-top:3px;">${body}</div>
+                        </div>
+                    </div>
+                `;
+
+        container.prepend(notification);
+
+        setTimeout(() => {
+            notification.classList.remove('hidden');
+        }, 100);
+
+        setTimeout(() => {
+            notification.classList.add('hidden');
+            setTimeout(() => {
+                if (notification.parentNode) {
+                    notification.parentNode.removeChild(notification);
+                }
+            }, 500);
+        }, 5000);
+
+        notification.querySelector('.close-btn').addEventListener('click', () => {
+            notification.classList.add('hidden');
+            setTimeout(() => {
+                if (notification.parentNode) {
+                    notification.parentNode.removeChild(notification);
+                }
+            }, 500);
+        });
+    }
+</script>

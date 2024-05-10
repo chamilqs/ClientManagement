@@ -1,0 +1,74 @@
+﻿@using ClientManagement.Core.Application.ViewModels.Client;
+@model SaveClientViewModel;
+
+@{
+    ViewData["Title"] = "New address";
+}
+
+<div class="row mt-3">
+    <div class="col-6 offset-3">
+        <div class="container">
+            <div class="row justify-content-center">
+                <div class="col-lg-7">
+                    <div class="card border-0 rounded-lg mt-5">
+                        <div class="card-text"><h2 class="text-center font-weight-light my-4">New address</h2></div>
+                        <div class="card-body">
+                            <form method="post" asp-controller="Home" asp-action="AddClient" id="clientForm">
+                                <div class="row mb-3">
+                                <div class="card-text"><h4 class="text-center font-weight-light my-4">Address</h4></div>
+                                <div>
+                                    <div id="addressesContainer" class="container">
+                                        <div id="addressTemplate" class="border-bottom mt-2">
+                                            <div class="form-floating mb-3">
+                                                <input asp-for="Street" class="form-control" id="inputStreet" type="text" placeholder="Enter your street" />
+                                                <span asp-validation-for="Street" class="text-danger"></span>
+                                                <label for="inputStreet">Street</label>
+                                            </div>
+                                            <div class="row mb-3">
+                                                <div class="col-md-6">
+                                                    <div class="form-floating mb-3 mb-md-0">
+                                                        <input asp-for="City" class="form-control" id="inputCity" type="text" placeholder="Enter your city" />
+                                                        <span asp-validation-for="City" class="text-danger"></span>
+                                                        <label for="inputCity">City</label>
+                                                    </div>
+                                                </div>
+                                                <div class="col-md-6">
+                                                    <div class="form-floating mb-3 mb-md-0">
+                                                        <input asp-for="State" class="form-control" id="inputState" type="text" placeholder="Enter your state" />
+                                                        <span asp-validation-for="State" class="text-danger"></span>
+                                                        <label for="inputState">State</label>
+                                                    </div>
+                                                </div>
+                                                <div class="col-md-6 mt-2">
+                                                    <div class="form-floating mb-3 mb-md-0">
+                                                        <input asp-for="PostalCode" class="form-control" id="inputPostalCode" type="text" placeholder="Enter your postal code" />
+                                                        <span asp-validation-for="PostalCode" class="text-danger"></span>
+                                                        <label for="inputPostalCode">Postal Code</label>
+                                                    </div>
+                                                </div>
+                                                <div class="col-md-6 mt-2">
+                                                    <div class="form-floating mb-3 mb-md-0">
+                                                        <input asp-for="Country" class="form-control" id="inputCountry" type="text" placeholder="Enter your country" />
+                                                        <span asp-validation-for="Country" class="text-danger"></span>
+                                                        <label for="inputCountry">Country</label>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="mt-4 mb-0">
+                                    <div class="d-grid">
+                                        <button id="createClientButton" class="btn btn-primary btn-block" type="submit">Create client</button>
+                                    </div>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+

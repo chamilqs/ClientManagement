@@ -1,0 +1,28 @@
+﻿using ClientManagement.Core.Application.Dtos.Account;
+using ClientManagement.Core.Application.Helpers;
+
+namespace ClientManagement.Presentation.WebApp.Middlewares
+{
+    public class ValidateUserSession
+    {
+        private readonly IHttpContextAccessor _httpContextAccessor;
+
+        public ValidateUserSession(IHttpContextAccessor httpContextAccessor)
+        {
+            _httpContextAccessor = httpContextAccessor;
+        }
+
+        public bool HasUser()
+        {
+
+            AuthenticationResponse userViewModel = _httpContextAccessor.HttpContext.Session.Get<AuthenticationResponse>("user");
+
+            if (userViewModel == null)
+            {
+                return false;
+            }
+            return true;
+        }
+
+    }
+}
